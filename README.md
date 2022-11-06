@@ -12,7 +12,25 @@ This is the official implementation for the method described in
 
 ![Qualitative_result](./images/Qualitative_result.jpg)
 
-# Setup
+# Setup with Docker (recommended)
+
+1. Clone this repository.
+
+2. Build a Docker image from Dockerfile.
+
+```shell
+$ cd docker
+$ docker build -t cadepth .
+$ cd ..
+```
+
+3. Create a container.
+
+```shell
+$ docker run -it --rm --gpus all --ipc host -v /path/to/current/directory/CADepth-master:/workspace/CADepth-master [-v /path/to/datadrive:/datadrive] [-p 8888:8888] [-p 6006:6006] cadepth
+```
+
+# Setup with conda
 
 Assuming a fresh [Anaconda](https://www.anaconda.com/download/) distribution, you can install the dependencies with:
 
@@ -141,6 +159,29 @@ You can download our precomputed disparity predictions from the following links:
 | Mono              | 1280 x 384 | 1.27G           | [Download 🔗](https://drive.google.com/file/d/103v-8xbLTyTH7GY-cQspSo7U6sWBD7pf/view?usp=sharing) |
 | Mono + Stereo     | 640 x 192  | 326M            | [Download 🔗](https://drive.google.com/file/d/106tKVF1fYzfnzgqErl5aUfUSNmjAWTN1/view?usp=sharing) |
 | Mono + Stereo     | 1024 x 320 | 871M            | [Download 🔗](https://drive.google.com/file/d/10FuvQl0Rxif1J9upWRLuy3gAmDYy4Uvz/view?usp=sharing) |
+
+# Finetuning with Dashcam Dataset
+
+1. Download pretrained weights of [`M_640x192`](https://drive.google.com/file/d/1-Xh_2AUw7fYSJ7Pqq89KdDSZYipv1TJ_/view?usp=sharing), [`M_1024x320`](https://drive.google.com/file/d/100m6JHvxEcsCmHhZkQw8_wW8KXqiPSfp/view?usp=sharing) or [`M_1024x320`](https://drive.google.com/file/d/100m6JHvxEcsCmHhZkQw8_wW8KXqiPSfp/view?usp=sharing).
+
+2. Convert `mp4` video files into `jpg` images.
+
+```shell
+$ cd datasets
+$ python convert_video_to_images.py --data_dir /path/to/data/dir --height 540 --width 1920
+$ cd ..
+```
+
+3. Run training.
+
+For `M_640x192`, run the following command.
+
+```shell
+$ python train.py --model_name finetuned_mono --load_weights_folder /path/to/weight --log_dir /path/to/log/dir --height 192 --width 640 --dataset dashcam --split dashcam --data_path /path/to/data/dir/image
+```
+
+For other models, modify `height` and `width` options.
+Finetuned model weights are saved under `/path/to/log/dir/finetuned_mono`.
 
 # References
 
