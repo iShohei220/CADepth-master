@@ -16,7 +16,11 @@ import albumentations.augmentations.transforms as transforms
 
 def cv2_loader(path):
     img = cv2.imread(path)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    try:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    except:
+        print(path)
+        raise ValueError("Path is not valid.")
     return img
 
 
